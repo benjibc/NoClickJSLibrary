@@ -4,16 +4,17 @@
 
 function MouseTracker()
 {
-	this.list_x = new CoordQueue();
-	this.list_y = new CoordQueue();
+	this.list_x = new CoordQueue(20);
+	this.list_y = new CoordQueue(20);
 	
 }
+
 MouseTracker.prototype.global_x = 0;
 MouseTracker.prototype.global_y = 0;
 MouseTracker.prototype.track = function()
 {
    $(document).mousemove(function(e){
-      //$('#status').html(e.pageX +', '+ e.pageY);
+      $('#debug_tracker').html(e.pageX +', '+ e.pageY);
       this.global_x = e.pageX;
       this.global_y = e.pageY;
    }); 
@@ -21,7 +22,4 @@ MouseTracker.prototype.track = function()
 
 
 var mouseTracker1 = new MouseTracker();
-
-
-
-
+mouseTracker1.track();
