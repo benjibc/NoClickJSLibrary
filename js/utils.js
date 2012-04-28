@@ -4,6 +4,22 @@
  * to solve the problem with an array that constantly needs to be sliced; there
  * will be two arrays that replaces each other
  */
+$(document).ready(function() {
+function Coord (x, y)
+{
+	this.x = 0;
+	this.y = 0;
+}
+
+Coord.prototype.setX = function(x)
+{
+	this.x = x;
+}
+
+Coord.prototype.setY = function(y)
+{
+	this.y = y;
+}
 
 function CoordQueue (length){
 	try{
@@ -80,3 +96,17 @@ CoordQueue.prototype.insert = function(val)
 		}
 	}
 }
+
+function element(id, type, coord, callback)
+{
+	this.m_x = coord.x;
+	this.m_y = coord.y;
+	this.m_id = id;
+	this.callback = callback;
+}
+element.prototype.trigger = function ()
+{
+	this.callback();
+}
+
+});
