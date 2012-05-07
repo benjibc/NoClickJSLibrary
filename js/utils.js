@@ -4,109 +4,140 @@
  * to solve the problem with an array that constantly needs to be sliced; there
  * will be two arrays that replaces each other
  */
-$(document).ready(function() {
-function Coord (x, y)
+/*function Coord (x, y)
 {
-	this.x = 0;
-	this.y = 0;
-}
-
-Coord.prototype.setX = function(x)
-{
-	this.x = x;
-}
-
-Coord.prototype.setY = function(y)
-{
-	this.y = y;
+  this.x = x;
+  this.y = y;
 }
 
 function CoordQueue (length){
-	try{
-		if(isNaN(length))
-			throw "NotANumber";
-		else if (length <= 0)
-			throw "NotPos"
-	}
-	catch(err){
-		if(err == "NotANumber"){
-			document.write("Error! Coord queue initalised with a length that is not a number!");
-		}
-		if(err == "NotPos"){
-			alert("CoordQueue initialised with a negative number!");
-		}
-	}
-	this.length = length;
-	this.position = 0;
-	this.curArr = 1;
-	//basically, we fill the first array until it is totally
-	//filled; then we start filling in the second array
-	//so it looks like we are constantly removing the first element
-	//in the array and adding some element after the array
-	
-	this.array1 = [length];
-	this.array2 = [length];
-	for(var i = 0 ; i < length; i ++)
-	{
-		this.array1[0] = 0;
-		this.array2[0] = 0;
-	}
+  try{
+    if(isNaN(length))
+      throw "NotANumber";
+    else if (length <= 0)
+      throw "NotPos"
+  }
+  catch(err){
+    if(err == "NotANumber"){
+      document.write("Error! Coord queue initalised with a length that is not a number!");
+    }
+    if(err == "NotPos"){
+      alert("CoordQueue initialised with a negative number!");
+    }
+  }
+  this.length = length;
+  this.position = 0;
+  this.curArr = 1;
+  //basically, we fill the first array until it is totally
+  //filled; then we start filling in the second array
+  //so it looks like we are constantly removing the first element
+  //in the array and adding some element after the array
+  
+  this.array1 = new Array (length);
+  this.array2 = new Array (length);
+  for(var i = 0 ; i < length; i ++)
+  {
+    this.array1[0] = 0;
+    this.array2[0] = 0;
+  }
 }
 
 CoordQueue.prototype.element = function(pos)
 {
-	if(this.position + pos >= this.length)
-	{
-		if(this.curArr == 1)
-			this.curArr = 2;
-		else
-			this.curArr = 1;
-		pos = this.position + pos - length;
-	}
-	if(this.curArr == 1)
-		return this.array1[pos];
-	else
-		return this.array2[pos];	
+  if(this.position + pos >= this.length)
+  {
+    if(this.curArr == 1)
+      this.curArr = 2;
+    else
+      this.curArr = 1;
+    pos = this.position + pos - length;
+  }
+  if(this.curArr == 1)
+    return this.array1[pos];
+  else
+    return this.array2[pos];  
 
 }
 
 CoordQueue.prototype.insert = function(val)
 {
-	if(this.curArr == 1)
-	{
-		if( this.position < this.length)
-		{
-			this.array1[this.position] = val;
-		}
-		else{
-			this.curArr = 2;
-			this.position = 0;
-			this.array2[0] = val;
-		}
-		position ++;
-	}
-	else //this.curArr = 2
-	{
-		if(this.position < this.length)
-			this.array2[this.position] = val;
-		else{
-			this.curArr = 1;
-			this.position = 0;
-			this.array1[0] = val;
-		}
-	}
+  if(this.curArr == 1)
+  {
+    if( this.position < this.length)
+    {
+      this.array1[this.position] = val;
+    }
+    else{
+      this.curArr = 2;
+      this.position = 0;
+      this.array2[0] = val;
+    }
+    position ++;
+  }
+  else //this.curArr = 2
+  {
+    if(this.position < this.length)
+      this.array2[this.position] = val;
+    else{
+      this.curArr = 1;
+      this.position = 0;
+      this.array1[0] = val;
+    }
+  }
+}*/
+
+function Element( curObject, ID, htmlID)
+{
+  this.m_ID = ID;
+  this.htmlID = htmlID;
+  this.object = curObject;
+  this.type = curObject[0].nodeName;
+  var position = curObject.position();
+  var width = curObject.width();
+  var height = curObject.height();
+  this.y_top = position.top;
+  this.y_bottom = position.top + height;
+  this.x_left = position.left;
+  this.x_right = position.left + width;
+  this.activationStage = 0;
+  this.initialise();
+}
+Element.prototype.trigger = function ()
+{
+  this.callback();
+}
+Element.prototype.callback = function()
+{
+  alert("old callback");
+} 
+Element.prototype.initialise = function()
+{
+  if(this.type == "P" || this.type == "DIV")
+    this.callback = function(){};
+  if(this.type == "INPUT")
+  {
+    var inputType = this.object.attr('type');
+    if(inputType == 'password')
+      this.callback = function()
+      {
+        this.object.trigger('enter');
+      };
+    else if(inputType == 'submit')
+      this.callback = function()
+      {
+        this.object.trigger('submit');
+      }
+    else
+      this.callback = function()
+      {
+        this.object.trigger('click');
+      }
+  }
+  //this.trigger();
 }
 
-function element(id, type, coord, callback)
+function absVal(val)
 {
-	this.m_x = coord.x;
-	this.m_y = coord.y;
-	this.m_id = id;
-	this.callback = callback;
-}
-element.prototype.trigger = function ()
-{
-	this.callback();
+  return Math.abs(val);
 }
 
-});
