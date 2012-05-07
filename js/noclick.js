@@ -50,7 +50,7 @@ MouseTracker.prototype.track = function()
         else if(absVal(e.pageX - ElementList[i].x_left) < 1) {
            ElementList[i].activationStage ++;
         }
-        else if(absVal(e.pageX - ElementList[i].x_right < 1) {
+        else if(absVal(e.pageX - ElementList[i].x_right) < 1) {
            ElementList[i].activationStage ++;
         }
 
