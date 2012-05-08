@@ -40,23 +40,34 @@ MouseTracker.prototype.track = function()
       this.global_y = e.pageY;
       for(var i = 0; i < ElementList.length; i++)
       {
-        if(absVal(e.pageY - ElementList[i].y_top) < 1 ){  
-           console.log("came close!"); 
-           ElementList[i].activationStage ++;
-        } 
-        else if(absVal(e.pageY - ElementList[i].y_bottom) < 1 ){
-           ElementList[i].activationStage ++;
+        if(absVal(e.pageX - ElementList[i].x_center) < 5)
+        {
+          if(absVal(e.pageY - ElementList[i].y_top) < 5 ){  
+             console.log("came close top!"); 
+             ElementList[i].activationStage ++;
+          } 
+          if(absVal(e.pageY - ElementList[i].y_bottom) < 5 ){
+             console.log("came close buttom!"); 
+             ElementList[i].activationStage ++;
+          }
         }
-        else if(absVal(e.pageX - ElementList[i].x_left) < 1) {
-           ElementList[i].activationStage ++;
-        }
-        else if(absVal(e.pageX - ElementList[i].x_right) < 1) {
-           ElementList[i].activationStage ++;
+
+        if(absVal(e.pageY -ElementList[i].y_center) <5)
+        {
+          if(absVal(e.pageX - ElementList[i].x_left) < 5) {
+             console.log("came close left!"); 
+             ElementList[i].activationStage ++;
+          }
+          if(absVal(e.pageX - ElementList[i].x_right) < 5) {
+             console.log("came close right!"); 
+             ElementList[i].activationStage ++;
+          }
         }
 
         if(ElementList[i].activationStage == 4){
           console.log("activated");
           ElementList[i].activationStage = 0;
+          ElementList[i].callback();
         }
       }
    }); 

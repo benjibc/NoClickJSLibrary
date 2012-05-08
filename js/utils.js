@@ -92,13 +92,15 @@ function Element( curObject, ID, htmlID)
   this.htmlID = htmlID;
   this.object = curObject;
   this.type = curObject[0].nodeName;
-  var position = curObject.position();
-  var width = curObject.width();
-  var height = curObject.height();
+  position = curObject.position();
+  this.width = curObject.outerWidth();
+  this.height = curObject.outerHeight();
   this.y_top = position.top;
-  this.y_bottom = position.top + height;
+  this.y_bottom = position.top + this.height;
+  this.y_center = position.top + (this.height /2);
   this.x_left = position.left;
-  this.x_right = position.left + width;
+  this.x_right = position.left + this.width;
+  this.x_center = position.left + (this.width /2);
   this.activationStage = 0;
   this.initialise();
 }
