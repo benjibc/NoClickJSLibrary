@@ -108,6 +108,17 @@ Element.prototype.trigger = function ()
 {
   this.callback();
 }
+//counter clockwise orientation. 0 is top, 1 is left, 2 is bottom, 3 is right
+Element.prototype.activate = function (val)
+{
+  switch(this.activationStage)
+  {
+    case 0:
+      this.activationStage++;
+      break;
+
+  }
+}
 Element.prototype.callback = function()
 {
   alert("old callback");

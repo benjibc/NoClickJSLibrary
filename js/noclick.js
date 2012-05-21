@@ -38,29 +38,35 @@ MouseTracker.prototype.track = function()
       $("#debug_tracker").text(e.pageX +', '+ e.pageY);
       this.global_x = e.pageX;
       this.global_y = e.pageY;
+      //counter clockwise orientation. 0 is top, 1 is left, 
+      //2 is bottom, 3 is right
       for(var i = 0; i < ElementList.length; i++)
       {
         if(absVal(e.pageX - ElementList[i].x_center) < 5)
         {
           if(absVal(e.pageY - ElementList[i].y_top) < 5 ){  
-             console.log("came close top!"); 
+             //console.log("came close top!"); 
              ElementList[i].activationStage ++;
+             ElementList[i].activate(0);
           } 
           if(absVal(e.pageY - ElementList[i].y_bottom) < 5 ){
-             console.log("came close buttom!"); 
+             //console.log("came close buttom!"); 
              ElementList[i].activationStage ++;
+             ElementList[i].activate(2);
           }
         }
 
         if(absVal(e.pageY -ElementList[i].y_center) <5)
         {
           if(absVal(e.pageX - ElementList[i].x_left) < 5) {
-             console.log("came close left!"); 
+             //console.log("came close left!"); 
              ElementList[i].activationStage ++;
+             ElementList[i].activate(1);
           }
           if(absVal(e.pageX - ElementList[i].x_right) < 5) {
-             console.log("came close right!"); 
+             //console.log("came close right!"); 
              ElementList[i].activationStage ++;
+             ElementList[i].activate(3);
           }
         }
 
