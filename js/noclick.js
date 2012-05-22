@@ -36,13 +36,24 @@ MouseTracker.prototype.track = function()
 {
    $(document).mousemove(function(e){
       $("#debug_tracker").text(e.pageX +', '+ e.pageY);
-      this.global_x = e.pageX;
-      this.global_y = e.pageY;
-      //counter clockwise orientation. 0 is top, 1 is left, 
-      //2 is bottom, 3 is right
       for(var i = 0; i < ElementList.length; i++)
-      {
-        if(absVal(e.pageX - ElementList[i].x_center) < 5)
+      { 
+        ElementList[i].activate(e.pageX, e.pageY);
+      }
+   }); 
+}
+
+MouseTracker.prototype.getElementCoord= function (ElementId)
+{
+  var position = $("#".ElementId).position();
+  return curCoord;
+}
+
+var mouseTracker1 = new MouseTracker();
+mouseTracker1.addElement("test_area");
+});
+
+        /*if(absVal(e.pageX - ElementList[i].x_center) < 5)
         {
           if(absVal(e.pageY - ElementList[i].y_top) < 5 ){  
              //console.log("came close top!"); 
@@ -74,18 +85,4 @@ MouseTracker.prototype.track = function()
           console.log("activated");
           ElementList[i].activationStage = 0;
           ElementList[i].callback();
-        }
-      }
-   }); 
-}
-
-MouseTracker.prototype.getElementCoord= function (ElementId)
-{
-  var position = $("#".ElementId).position();
-  return curCoord;
-}
-
-var mouseTracker1 = new MouseTracker();
-mouseTracker1.addElement("test_area");
-
-});
+        }*/

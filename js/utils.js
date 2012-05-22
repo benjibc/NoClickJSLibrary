@@ -102,23 +102,79 @@ function Element( curObject, ID, htmlID)
   this.x_right = position.left + this.width;
   this.x_center = position.left + (this.width /2);
   this.activationStage = 0;
+  this.prevPos = 0;
   this.initialise();
 }
 Element.prototype.trigger = function ()
 {
   this.callback();
 }
-//counter clockwise orientation. 0 is top, 1 is left, 2 is bottom, 3 is right
-Element.prototype.activate = function (val)
+//counter clockwise orientation. 1 is top, 2 is left, 3 is bottom, 4 is right
+Element.prototype.activate = function (x,y)
 {
-  switch(this.activationStage)
+  //console.log(this.activationPosition(x,y));
+  var curPos = this.activationPosition(x,y);
+  switch(curPos)
   {
-    case 0:
-      this.activationStage++;
-      break;
+     case 0:
+       break;
+     case 1:  //activated. only 0(none) 2(left) and 4(right) is allowed
+     case 3:  //activated. only 0(none) 2(left and 4(right) is allowed
+  console.log(this.activationStage + " " + this.prevPos);
+       if(this.prevPos == 0){
+         this.activationStage++;
+         this.prevPos = curPos
+         break;
+       }
+       if(this.prevPos==2||this.prevPos==4){
+         this.prevPos = curPos
+         this.activationStage++;
+       }
+       break;
+     case 2:  //activated. only 1(top) and 3(down) is allowed
+     case 4:  //activated. only 1(top) and 3(down) is allowed
+  console.log(this.activationStage + " " + this.prevPos);
+       if(this.prevPos == 0){
+         this.prevPos = curPos
+         this.activationStage++;
+         break;
+       }
+       if(this.prevPos % 2 == 1){
+         this.prevPos = curPos
+         this.activationStage++; 
+       }
+       break;
+     default: //error. set to zero
+       console.log("Element activation error");
+  }
 
+  if(this.activationStage == 4)
+  {
+    this.callback();
+    this.activationStage = 0;
   }
 }
+
+//counter clockwise orientation. 1 is top, 2 is left, 3 is bottom, 4 is right
+Element.prototype.activationPosition = function(x,y)
+{
+  if((absVal(y - this.y_top)<4) && (absVal(x - this.x_center) < 4)){
+     return 1; 
+  }
+  else if(absVal(y - this.y_bottom )< 4 && absVal(x - this.x_center)< 4){
+    return 3;    
+  }
+  
+  if(absVal(x-this.x_right) < 4 && absVal(y - this.y_center) < 4){
+      return 4; 
+  }
+  else if(absVal(x-this.x_left) < 4 && absVal(y - this.y_center) < 4){
+    return 2;
+  }
+  //nowhere close to any element
+  return 0;
+}
+
 Element.prototype.callback = function()
 {
   alert("old callback");
@@ -144,9 +200,9 @@ Element.prototype.initialise = function()
       this.callback = function()
       {
         this.object.trigger('click');
+        return;
       }
   }
-  //this.trigger();
 }
 
 function absVal(val)
