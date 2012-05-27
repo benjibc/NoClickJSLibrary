@@ -6,8 +6,6 @@
 //
 //MouseTracker will be initalised with a ID for the div that you want to
 //setup with noclick.
-//To increase the efficiency, we will not be calculating the distance using
-//sqrt here. we will be calculating the
 
 function MouseTracker ()
 {
@@ -17,35 +15,40 @@ function MouseTracker ()
   this.track();
 }
 
-MouseTracker.prototype.addElement = function(contentDivID, callback){
+//mode: 0 means circle, 1 means cross
+MouseTracker.prototype.addElement = function(topID, callback, just_self, mode){
   callback = typeof callback !== 'undefined' ? callback : null;
+  mode = typeof mode !== 'undefined' ? mode : 0;
+  just_self = typeof just_self !== 'undefined' ? 0 : 1;
   var Element_ID = ElementList.length;
-  ElementList.push(new Element( $("#"+contentDivID), Element_ID, 
-  contentDivID, callback));
+  ElementList.push(new Element( $("#"+topID), Element_ID, callback, mode));
   Element_ID++;  
-  $("#"+contentDivID).find('*').each(function (){
-    var kid = $(this);
-    ElementList.push(new  Element(kid, Element_ID,
-    kid.attr('id')));
-    Element_ID++;
-  });
+  if(!just_self)
+  {
+    $("#"+topID).find('*').each(function (){
+      var kid = $(this);
+      ElementList.push(new  Element(kid, Element_ID));
+      Element_ID++;
+    });
+  }
   console.log(this.m_ElementList);
 }
 
 MouseTracker.prototype.track = function()
 {
    $(document).mousemove(function(e){
-      $("#debug_tracker").text(e.pageX +', '+ e.pageY);
-      for(var i = 0; i < ElementList.length; i++){ 
-        ElementList[i].activate(e.pageX, e.pageY);
-      }
+     $("#debug_tracker").text(e.pageX +', '+ e.pageY);
+     for(var i = 0; i < ElementList.length; i++){ 
+       ElementList[i].activate(e.pageX, e.pageY);
+     }
    }); 
 }
 
-function Element( curObject, ID, htmlID, callback)
+function Element( curObject, ID, callback, mode)
 {
+  this.mode = mode;
   this.m_ID = ID;
-  this.htmlID = htmlID;
+  this.htmlID = curObject.attr('id');
   this.object = curObject;
   this.type = curObject[0].nodeName;
   position = curObject.position();
@@ -63,7 +66,8 @@ function Element( curObject, ID, htmlID, callback)
   this.initialise();
   else
     this.callback = callback;
-  this.tolerance= 8;
+  this.x_tolerance= 8;
+  this.y_tolerance= 8;
 }
 Element.prototype.trigger = function ()
 {
@@ -115,25 +119,34 @@ Element.prototype.activate = function (x,y)
   }
 }
 
+//when mode = 0, i.e. circle
 //counter clockwise orientation. 1 is top, 2 is left, 3 is bottom, 4 is right
+//when mode = 1, i.e triangle
+//1 is left_top, 2 is right_bottom, 3 is right_top, 4 is left_bottom
 Element.prototype.activationPosition = function(x,y)
 {
-  if((absVal(y - this.y_top)<this.tolerance) && 
-     (absVal(x - this.x_center) < this.tolerance)){
-     return 1; 
+  if(this.mode == 0)
+  {
+    if(absVal(x - this.x_center) < this.x_tolerance){
+      if(absVal(y - this.y_top)<this.y_tolerance)     return 1; 
+      if(absVal(y - this.y_bottom )< this.y_tolerance)   return 3;
+    }
+    if (absVal(y - this.y_center) < this.x_tolerance){
+      if(absVal(x-this.x_right) < this.y_tolerance)       return 4; 
+      if(absVal(x-this.x_left) < this.y_tolerance)   return 2;
+    }
   }
-  else if(absVal(y - this.y_bottom )< this.tolerance && 
-          absVal(x - this.x_center) < this.tolerance){
-    return 3;    
-  }
-  
-  if(absVal(x-this.x_right) < this.tolerance 
-     && absVal(y - this.y_center) < this.tolerance){
-      return 4; 
-  }
-  else if(absVal(x-this.x_left) < this.tolerance && 
-          absVal(y - this.y_center) < this.tolerance){
-    return 2;
+  else if (this.mode == 1)
+  {
+    if(absVal(y - this.y_top) < this.y_tolerance){
+      if(absVal(x - this.x_left) < this.x_tolerance) return 1;
+      if(absVal(x - this.x_right) < this.x_tolerance) return 3;
+    }
+    if(absVal(y - this.y_bottom) < this.y_tolerance){
+      if(absVal(x - this.x_left) < this.x_tolerance) return 4;
+      if(absVal(x - this.x_right) < this.x_tolerance) return 2;
+    } 
+    return 0;
   }
   //nowhere close to any element
   return 0;
